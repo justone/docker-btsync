@@ -26,11 +26,8 @@ if [[ ! -e $BTSYNC_HOME/.sync ]]; then
   chown ${BTSYNC_USER}.${BTSYNC_USER} $BTSYNC_HOME/.sync
 fi
 
-if [[ -e $BTSYNC_HOME/btsync.conf ]]; then
-  BTSYNC_CONF=$BTSYNC_HOME/btsync.conf
-else
-  BTSYNC_CONF=$BTSYNC_HOME/btsync.gen.conf
-  cat > $BTSYNC_USER/btsync.gen.conf <<EOF
+if [[ ! -e $BTSYNC_HOME/btsync.conf ]]; then
+  cat > $BTSYNC_USER/btsync.conf <<EOF
 { 
   "device_name": "Docker BTsync",
   "listening_port" : 55555,
@@ -47,8 +44,8 @@ else
   }
 }
 EOF
-  chown ${BTSYNC_USER}.${BTSYNC_USER} $BTSYNC_HOME/btsync.gen.conf
+  chown ${BTSYNC_USER}.${BTSYNC_USER} $BTSYNC_HOME/btsync.conf
 fi
 
 cd $BTSYNC_HOME
-/usr/bin/gosu $BTSYNC_UID:$BTSYNC_GID /usr/bin/btsync --nodaemon --config $BTSYNC_CONF
+/usr/bin/gosu $BTSYNC_UID:$BTSYNC_GID /usr/bin/btsync --nodaemon --config $BTSYNC_HOME/btsync.conf
